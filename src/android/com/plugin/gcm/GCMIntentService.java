@@ -9,17 +9,34 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.HttpURLConnection;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import com.google.android.gcm.GCMBaseIntentService;
+import java.io.IOException;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Rect;
+import android.graphics.BitmapFactory.Options;
+import android.webkit.WebView;
+
 
 @SuppressLint("NewApi")
 public class GCMIntentService extends GCMBaseIntentService {
 
 	private static final String TAG = "GCMIntentService";
-	
+
 	public GCMIntentService() {
 		super("GCMIntentService");
 	}
@@ -65,8 +82,12 @@ public class GCMIntentService extends GCMBaseIntentService {
 		{
 			// if we are in the foreground, just surface the payload, else post it to the statusbar
             if (PushPlugin.isInForeground()) {
-				extras.putBoolean("foreground", true);
+				extras.putBoolean("foreground", false);
                 PushPlugin.sendExtras(extras);
+
+                if (extras.getString("message") != null && extras.getString("message").length() != 0) {
+                    createNotification(context, extras);
+                }
 			}
 			else {
 				extras.putBoolean("foreground", false);
@@ -97,16 +118,41 @@ public class GCMIntentService extends GCMBaseIntentService {
 				defaults = Integer.parseInt(extras.getString("defaults"));
 			} catch (NumberFormatException e) {}
 		}
-		
-		NotificationCompat.Builder mBuilder =
-			new NotificationCompat.Builder(context)
+        Bitmap icon = null;
+
+		if(extras.getString("image") != null) {
+
+            try {
+                URL url = new URL(extras.getString("image"));
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream input = connection.getInputStream();
+                icon = BitmapFactory.decodeStream(input);
+                icon = getCircleBitmap(icon);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+
+            }
+
+
+		}
+
+        Notification.Builder mBuilder =
+			new Notification.Builder(context)
 				.setDefaults(defaults)
-				.setSmallIcon(context.getApplicationInfo().icon)
+				.setSmallIcon(com.osw.oursaxionworld.R.drawable.icon)
+				.setLargeIcon(icon)
 				.setWhen(System.currentTimeMillis())
 				.setContentTitle(extras.getString("title"))
 				.setTicker(extras.getString("title"))
 				.setContentIntent(contentIntent)
-				.setAutoCancel(true);
+                .setColor(Color.argb(1, 20, 105, 58))
+                .setLights(Color.GREEN, 300, 3000)
+				.setAutoCancel(true)
+                .setPriority(Notification.PRIORITY_MAX)
+                .setContentInfo("Our Saxion World");
 
 		String message = extras.getString("message");
 		if (message != null) {
@@ -119,7 +165,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 		if (msgcnt != null) {
 			mBuilder.setNumber(Integer.parseInt(msgcnt));
 		}
-		
+
 		int notId = 0;
 		
 		try {
@@ -149,5 +195,31 @@ public class GCMIntentService extends GCMBaseIntentService {
 	public void onError(Context context, String errorId) {
 		Log.e(TAG, "onError - errorId: " + errorId);
 	}
+
+
+
+    private Bitmap getCircleBitmap(Bitmap bitmap) {
+        final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(output);
+
+        final int color = Color.RED;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawOval(rectF, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        bitmap.recycle();
+
+        return output;
+    }
+
 
 }
