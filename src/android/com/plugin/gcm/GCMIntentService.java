@@ -82,7 +82,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 		{
 			// if we are in the foreground, just surface the payload, else post it to the statusbar
             if (PushPlugin.isInForeground()) {
-				extras.putBoolean("foreground", false);
+				extras.putBoolean("foreground", true);
                 PushPlugin.sendExtras(extras);
 
                 if (extras.getString("message") != null && extras.getString("message").length() != 0) {
