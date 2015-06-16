@@ -139,21 +139,21 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 		}
 
-        new Notification.Builder(context)
-                .setDefaults(defaults)
-                .setSmallIcon(com.osw.oursaxionworld.R.drawable.icon)
-                .setLargeIcon(icon)
-                .setWhen(System.currentTimeMillis())
-                .setContentTitle(extras.getString("title"))
-                .setTicker(extras.getString("title"))
-                .setContentIntent(contentIntent)
+        Notification.Builder mBuilder =
+			new Notification.Builder(context)
+				.setDefaults(defaults)
+				.setSmallIcon(com.osw.oursaxionworld.R.drawable.icon)
+				.setLargeIcon(icon)
+				.setWhen(System.currentTimeMillis())
+				.setContentTitle(extras.getString("title"))
+				.setTicker(extras.getString("title"))
+				.setContentIntent(contentIntent)
                 .setColor(Color.argb(1, 20, 105, 58))
                 .setLights(Color.GREEN, 300, 3000)
-                .setAutoCancel(true)
+				.setAutoCancel(true)
                 .setGroup(extras.getString("group"))
                 .setGroupSummary(true)
                 .setContentInfo("Our Saxion World");
-        
 
 		String message = extras.getString("message");
 		if (message != null) {
