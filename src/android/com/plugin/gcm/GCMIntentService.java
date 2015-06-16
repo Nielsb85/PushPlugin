@@ -152,6 +152,7 @@ public class GCMIntentService extends GCMBaseIntentService {
                 .setLights(Color.GREEN, 300, 3000)
 				.setAutoCancel(true)
                 .setPriority(Notification.PRIORITY_MAX)
+                .setGroup(extras.getString("group"))
                 .setContentInfo("Our Saxion World");
 
 		String message = extras.getString("message");
