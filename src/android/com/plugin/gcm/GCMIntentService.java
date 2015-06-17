@@ -17,7 +17,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import java.net.URL;
 import java.net.URLConnection;
@@ -149,12 +148,16 @@ public class GCMIntentService extends GCMBaseIntentService {
 				.setContentTitle(extras.getString("title"))
 				.setTicker(extras.getString("title"))
 				.setContentIntent(contentIntent)
-                .setColor(Color.argb(1, 20, 105, 58))
                 .setLights(Color.GREEN, 300, 3000)
 				.setAutoCancel(true)
                 .setGroup(extras.getString("group"))
                 .setGroupSummary(true)
                 .setContentInfo("Our Saxion World");
+
+
+        try {
+            mBuilder.setColor(Color.argb(1, 20, 105, 58));
+        }
 
 		String message = extras.getString("message");
 		if (message != null) {
