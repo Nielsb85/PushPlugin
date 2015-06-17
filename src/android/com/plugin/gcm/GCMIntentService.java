@@ -18,6 +18,8 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.Log;
+
+import java.lang.Exception;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.HttpURLConnection;
@@ -157,6 +159,8 @@ public class GCMIntentService extends GCMBaseIntentService {
 
         try {
             mBuilder.setColor(Color.argb(1, 20, 105, 58));
+        } catch(Exception e) {
+            
         }
 
 		String message = extras.getString("message");
