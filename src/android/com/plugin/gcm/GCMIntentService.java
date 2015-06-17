@@ -33,6 +33,7 @@ import android.graphics.Rect;
 import android.graphics.BitmapFactory.Options;
 import android.webkit.WebView;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
 @SuppressLint("NewApi")
 public class GCMIntentService extends GCMBaseIntentService {
@@ -149,9 +150,8 @@ public class GCMIntentService extends GCMBaseIntentService {
 				.setWhen(System.currentTimeMillis())
 				.setContentTitle(extras.getString("title"))
 				.setTicker(extras.getString("title"))
-				.setContentIntent(contentIntent)
-                .setLights(Color.GREEN, 300, 3000)
-				.setAutoCancel(true);
+				.setContentIntent(contentIntent);
+
 
 
 
@@ -159,7 +159,10 @@ public class GCMIntentService extends GCMBaseIntentService {
             mBuilder.setColor(Color.argb(1, 20, 105, 58));
             mBuilder.setGroup(extras.getString("group"));
             mBuilder.setGroupSummary(true);
-            mBuilder.setContentInfo("Our Saxion World");
+            mBuilder.setContentInfo("Our Saxion World")
+            mBuilder.setLights(Color.GREEN, 300, 3000)
+            mBuilder.setAutoCancel(true);
+
         } catch(Exception e) {
 
         }
