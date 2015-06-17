@@ -152,15 +152,15 @@ public class GCMIntentService extends GCMBaseIntentService {
 				.setContentIntent(contentIntent)
                 .setLights(Color.GREEN, 300, 3000)
 				.setAutoCancel(true)
-                .setGroup(extras.getString("group"))
-                .setGroupSummary(true)
                 .setContentInfo("Our Saxion World");
 
 
         try {
             mBuilder.setColor(Color.argb(1, 20, 105, 58));
+            mBuilder.setGroup(extras.getString("group"));
+            mBuilder.setGroupSummary(true);
         } catch(Exception e) {
-            
+
         }
 
 		String message = extras.getString("message");
