@@ -33,7 +33,7 @@ import android.graphics.Rect;
 import android.graphics.BitmapFactory.Options;
 import android.webkit.WebView;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.app.NotificationCompat.Builder;
 
 @SuppressLint("NewApi")
 public class GCMIntentService extends GCMBaseIntentService {
@@ -112,7 +112,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 		notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		notificationIntent.putExtra("pushBundle", extras);
 
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		
 		int defaults = Notification.DEFAULT_ALL;
 
@@ -141,57 +141,59 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 
 		}
-
-        Notification.Builder mBuilder =
-			new NotificationCompat.Builder(context)
-				.setDefaults(defaults)
-				.setSmallIcon(com.osw.oursaxionworld.R.drawable.icon)
-				.setLargeIcon(icon)
-				.setWhen(System.currentTimeMillis())
-				.setContentTitle(extras.getString("title"))
-				.setTicker(extras.getString("title"))
-				.setContentIntent(contentIntent);
-
-
-
-
         try {
-            mBuilder.setColor(Color.argb(1, 20, 105, 58));
-            mBuilder.setGroup(extras.getString("group"));
-            mBuilder.setGroupSummary(true);
-            mBuilder.setContentInfo("Our Saxion World");
-            mBuilder.setLights(Color.GREEN, 300, 3000);
-            mBuilder.setAutoCancel(true);
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(context)
+                    .setDefaults(defaults)
+                    .setSmallIcon(com.osw.oursaxionworld.R.drawable.icon)
+                    .setLargeIcon(icon)
+                    .setWhen(System.currentTimeMillis())
+                    .setContentTitle(extras.getString("title"))
+                    .setTicker(extras.getString("title"))
+                    .setContentIntent(contentIntent);
+
+
+
+
+
+                //mBuilder.setColor(Color.argb(1, 20, 105, 58));
+                //mBuilder.setGroup(extras.getString("group"));
+                //mBuilder.setGroupSummary(true);
+                mBuilder.setContentInfo("Our Saxion World");
+                mBuilder.setLights(Color.GREEN, 300, 3000);
+                mBuilder.setAutoCancel(true);
+
+            String message = extras.getString("message");
+            if (message != null) {
+                mBuilder.setContentText(message);
+            } else {
+                mBuilder.setContentText("<missing message content>");
+            }
+
+            String msgcnt = extras.getString("msgcnt");
+            if (msgcnt != null) {
+                mBuilder.setNumber(Integer.parseInt(msgcnt));
+            }
+
+            int notId = 0;
+
+            try {
+                notId = Integer.parseInt(extras.getString("notId"));
+            }
+            catch(NumberFormatException e) {
+                Log.e(TAG, "Number format exception - Error parsing Notification ID: " + e.getMessage());
+            }
+            catch(Exception e) {
+                Log.e(TAG, "Number format exception - Error parsing Notification ID" + e.getMessage());
+            }
+
+            mNotificationManager.notify((String) appName, notId, mBuilder.getNotification());
 
         } catch(Exception e) {
 
         }
 
-		String message = extras.getString("message");
-		if (message != null) {
-			mBuilder.setContentText(message);
-		} else {
-			mBuilder.setContentText("<missing message content>");
-		}
 
-		String msgcnt = extras.getString("msgcnt");
-		if (msgcnt != null) {
-			mBuilder.setNumber(Integer.parseInt(msgcnt));
-		}
-
-		int notId = 0;
-		
-		try {
-			notId = Integer.parseInt(extras.getString("notId"));
-		}
-		catch(NumberFormatException e) {
-			Log.e(TAG, "Number format exception - Error parsing Notification ID: " + e.getMessage());
-		}
-		catch(Exception e) {
-			Log.e(TAG, "Number format exception - Error parsing Notification ID" + e.getMessage());
-		}
-		
-		mNotificationManager.notify((String) appName, notId, mBuilder.build());
 	}
 	
 	private static String getAppName(Context context)
