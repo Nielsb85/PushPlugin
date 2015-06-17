@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -30,7 +31,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.BitmapFactory.Options;
 import android.webkit.WebView;
-
+import android.support.v4.app.NotificationCompat;
 
 @SuppressLint("NewApi")
 public class GCMIntentService extends GCMBaseIntentService {
@@ -140,7 +141,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 		}
 
         Notification.Builder mBuilder =
-			new Notification.Builder(context)
+			new NotificationCompat.Builder(context)
 				.setDefaults(defaults)
 				.setSmallIcon(com.osw.oursaxionworld.R.drawable.icon)
 				.setLargeIcon(icon)
